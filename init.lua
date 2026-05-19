@@ -7,4 +7,4 @@ require("config.options")
 require("config.autocmds")
 require("config.lazy")
 
-vim.cmd.colorscheme("habamax")
+vim.cmd.colorscheme("retrobox")
