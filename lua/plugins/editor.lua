@@ -94,7 +94,6 @@ return {
     branch = "0.1.x",
     keys = {
       { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "查找文件" },
-      { "<leader>fg", "<cmd>SearchAll<cr>", desc = "搜索项目代码" },
     },
     cmd = "Telescope",
     dependencies = {
@@ -138,8 +137,8 @@ return {
         return require("telescope.builtin")
       end
 
-      local function git_grep(pathspec)
-        vim.ui.input({ prompt = "搜索代码: " }, function(query)
+      local function git_grep(pathspec, initial_query)
+        local function run(query)
           if not query or query == "" then
             return
           end
@@ -166,15 +165,17 @@ return {
             efm = "%f:%l:%c:%m",
           })
           telescope().quickfix({ cwd = root })
-        end)
+        end
+
+        if initial_query and initial_query ~= "" then
+          run(initial_query)
+        else
+          vim.ui.input({ prompt = "搜索代码: " }, run)
+        end
       end
 
-      local function search_all()
-        git_grep()
-      end
-
-      local function search_current_file()
-        telescope().current_buffer_fuzzy_find()
+      local function search_all(opts)
+        git_grep(nil, opts.args)
       end
 
       local function search_current_dir()
@@ -185,10 +186,7 @@ return {
         git_grep(relative and relative ~= "" and relative or ".")
       end
 
-      vim.api.nvim_create_user_command("SearchAll", search_all, { desc = "Search project" })
-      vim.api.nvim_create_user_command("Sa", search_all, { desc = "Search project" })
-      vim.api.nvim_create_user_command("SA", search_all, { desc = "Search project" })
-      vim.api.nvim_create_user_command("Search", search_current_file, { desc = "Search current file" })
+      vim.api.nvim_create_user_command("Search", search_all, { nargs = "*", desc = "Search project" })
       vim.api.nvim_create_user_command("SearchDir", search_current_dir, { desc = "Search current file directory" })
       vim.api.nvim_create_user_command("Sd", search_current_dir, { desc = "Search current file directory" })
     end,
