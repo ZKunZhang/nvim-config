@@ -1,20 +1,5 @@
 return {
   {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {
-      preset = "modern",
-      spec = {
-        { "<leader>c", group = "代码" },
-        { "<leader>f", group = "查找" },
-        { "<leader>g", group = "Git" },
-        { "<leader>h", group = "块级改动" },
-        { "<leader>s", group = "搜索" },
-        { "<leader>x", group = "诊断" },
-      },
-    },
-  },
-  {
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },

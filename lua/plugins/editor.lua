@@ -36,6 +36,9 @@ return {
   {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeFindFileToggle", "NvimTreeFocus" },
+    keys = {
+      { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "浏览项目目录" },
+    },
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       hijack_cursor = true,
@@ -92,6 +95,12 @@ return {
   {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
+    keys = {
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "查找文件" },
+      { "<leader>fg", "<cmd>SearchAll<cr>", desc = "搜索项目代码" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "查找已打开文件" },
+      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "查找最近文件" },
+    },
     cmd = "Telescope",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -175,46 +184,5 @@ return {
       vim.api.nvim_create_user_command("SearchDir", search_current_dir, { desc = "Search current file directory" })
       vim.api.nvim_create_user_command("Sd", search_current_dir, { desc = "Search current file directory" })
     end,
-  },
-  {
-    "folke/trouble.nvim",
-    cmd = "Trouble",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {},
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    branch = "master",
-    build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
-    opts = {
-      ensure_installed = {
-        "javascript",
-        "typescript",
-        "tsx",
-        "css",
-        "scss",
-        "json",
-        "lua",
-        "vim",
-        "vimdoc",
-        "markdown",
-        "markdown_inline",
-      },
-      highlight = {
-        enable = true,
-      },
-      indent = {
-        enable = true,
-      },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
-    end,
-  },
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {},
   },
 }

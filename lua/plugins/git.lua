@@ -6,8 +6,4 @@ return {
       current_line_blame = false,
     },
   },
-  {
-    "tpope/vim-fugitive",
-    cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "Gwrite", "Gread" },
-  },
 }
