@@ -103,14 +103,7 @@ nvim src/pages/index.tsx
 :Search
 ```
 
-弹出输入框，搜索整个项目代码。也可以使用 `:Search 搜索文本` 直接搜索。
-
-```vim
-:SearchDir
-:Sd
-```
-
-搜索当前文件所在目录。
+打开 Telescope 全局搜索界面，通过 Git 实时搜索项目代码，无需安装 ripgrep。也可以使用 `:Search 搜索文本` 带入初始搜索词。
 
 ## 8. 基础操作
 

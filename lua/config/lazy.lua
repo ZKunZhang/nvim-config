@@ -25,9 +25,6 @@ require("lazy").setup({
     { import = "plugins.editor" },
     { import = "plugins.git" },
   },
-  defaults = {
-    lazy = false,
-  },
   install = {
     colorscheme = { "habamax" },
   },
@@ -43,7 +40,6 @@ require("lazy").setup({
         "gzip",
         "matchit",
         "matchparen",
-        "netrwPlugin",
         "tarPlugin",
         "tohtml",
         "tutor",
