@@ -129,27 +129,7 @@ return {
             hidden = true,
             cwd = project_root(),
             no_ignore = false,
-            find_command = vim.fn.executable("fd") == 1
-                and { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git" }
-              or nil,
-          },
-          live_grep = {
-            cwd = project_root(),
-            additional_args = function()
-              return {
-                "--hidden",
-                "--glob",
-                "!**/.git/**",
-                "--glob",
-                "!**/node_modules/**",
-                "--glob",
-                "!**/dist/**",
-                "--glob",
-                "!**/build/**",
-                "--glob",
-                "!**/coverage/**",
-              }
-            end,
+            find_command = { "git", "ls-files", "--cached", "--others", "--exclude-standard" },
           },
           oldfiles = {
             cwd_only = true,
@@ -163,8 +143,39 @@ return {
         return require("telescope.builtin")
       end
 
+      local function git_grep(pathspec)
+        vim.ui.input({ prompt = "搜索代码: " }, function(query)
+          if not query or query == "" then
+            return
+          end
+
+          local root = project_root()
+          local command = { "git", "-C", root, "grep", "-n", "--column", "--full-name", "-e", query, "--" }
+          if pathspec then
+            table.insert(command, pathspec)
+          end
+
+          local results = vim.fn.systemlist(command)
+          if vim.v.shell_error > 1 then
+            vim.notify(table.concat(results, "\n"), vim.log.levels.ERROR)
+            return
+          end
+          if #results == 0 then
+            vim.notify("没有找到匹配代码", vim.log.levels.INFO)
+            return
+          end
+
+          vim.fn.setqflist({}, " ", {
+            title = "git grep: " .. query,
+            lines = results,
+            efm = "%f:%l:%c:%m",
+          })
+          telescope().quickfix({ cwd = root })
+        end)
+      end
+
       local function search_all()
-        telescope().live_grep({ cwd = project_root() })
+        git_grep()
       end
 
       local function search_current_file()
@@ -173,8 +184,10 @@ return {
 
       local function search_current_dir()
         local file = vim.api.nvim_buf_get_name(0)
-        local cwd = file ~= "" and vim.fs.dirname(file) or project_root()
-        telescope().live_grep({ cwd = cwd })
+        local root = project_root()
+        local directory = file ~= "" and vim.fs.dirname(file) or root
+        local relative = directory:sub(1, #root) == root and directory:sub(#root + 2) or nil
+        git_grep(relative and relative ~= "" and relative or ".")
       end
 
       vim.api.nvim_create_user_command("SearchAll", search_all, { desc = "Search project" })
