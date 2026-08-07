@@ -15,6 +15,10 @@
 
 配置仓库：`git@github.com:ZKunZhang/nvim-config.git`
 
+### 终端与配色
+
+配置针对 macOS Terminal 的 `Basic` 浅色 Profile，使用 Neovim 内置 `default` 配色和 256 色模式，不需要安装额外主题插件。
+
 ## 2. 环境安装
 
 macOS 使用 Homebrew 安装：

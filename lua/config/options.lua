@@ -60,6 +60,7 @@ opt.sidescrolloff = 8
 opt.splitbelow = true
 opt.splitright = true
 opt.mouse = "a"
+opt.background = "light"
 opt.termguicolors = false
 opt.wrap = false
 opt.list = false
@@ -118,4 +119,3 @@ if vim.fn.executable("rg") == 1 then
 end
 
 vim.g.loaded_matchparen = 1
-
