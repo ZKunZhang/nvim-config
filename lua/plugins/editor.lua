@@ -36,9 +36,6 @@ return {
   {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeFindFileToggle", "NvimTreeFocus" },
-    keys = {
-      { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "浏览项目目录" },
-    },
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       hijack_cursor = true,
@@ -98,8 +95,6 @@ return {
     keys = {
       { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "查找文件" },
       { "<leader>fg", "<cmd>SearchAll<cr>", desc = "搜索项目代码" },
-      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "查找已打开文件" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "查找最近文件" },
     },
     cmd = "Telescope",
     dependencies = {
