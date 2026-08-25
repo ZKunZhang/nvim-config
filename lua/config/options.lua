@@ -3,11 +3,13 @@ local opt = vim.opt
 opt.fileencodings = { "utf-8", "ucs-bom", "gb18030", "gbk", "gb2312", "cp936", "big5", "latin1" }
 opt.autoread = true
 opt.confirm = true
-opt.undolevels = 300
+opt.undolevels = 200
 opt.directory = vim.fn.expand("~/.local/state/nvim/swap//")
 opt.undodir = vim.fn.expand("~/.local/state/nvim/undo")
 opt.viewdir = vim.fn.expand("~/.local/state/nvim/view//")
 opt.undofile = true
+-- Keep long-running terminal jobs from retaining an unbounded amount of output.
+opt.scrollback = 2000
 
 for _, dir in ipairs({
   vim.fn.expand("~/.local/state/nvim/swap"),
@@ -44,12 +46,14 @@ opt.lazyredraw = true
 opt.laststatus = 3
 opt.winborder = "rounded"
 opt.cursorlineopt = "number"
+opt.showmode = false
 
 opt.ignorecase = true
 opt.smartcase = true
 opt.incsearch = true
 opt.hlsearch = true
-opt.history = 1000
+opt.history = 500
+opt.shada = { "!", "'100", "<50", "s10", "h" }
 opt.wildignorecase = true
 opt.inccommand = "nosplit"
 opt.backspace = { "indent", "eol", "start" }
