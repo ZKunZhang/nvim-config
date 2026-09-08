@@ -3,7 +3,7 @@ local opt = vim.opt
 opt.fileencodings = { "utf-8", "ucs-bom", "gb18030", "gbk", "gb2312", "cp936", "big5", "latin1" }
 opt.autoread = true
 opt.confirm = true
-opt.undolevels = 200
+opt.undolevels = 1000
 opt.directory = vim.fn.expand("~/.local/state/nvim/swap//")
 opt.undodir = vim.fn.expand("~/.local/state/nvim/undo")
 opt.viewdir = vim.fn.expand("~/.local/state/nvim/view//")
@@ -56,6 +56,7 @@ opt.history = 500
 opt.shada = { "!", "'100", "<50", "s10", "h" }
 opt.wildignorecase = true
 opt.inccommand = "nosplit"
+opt.completeopt = { "menu", "menuone", "noselect" }
 opt.backspace = { "indent", "eol", "start" }
 opt.autoindent = true
 opt.smartindent = true
@@ -81,3 +82,7 @@ opt.wildignore:append({
   "*/.next/*",
   "*/.turbo/*",
 })
+
+-- Keep opened files available when switching, including unsaved edits.
+opt.hidden = true
+opt.showtabline = 2
