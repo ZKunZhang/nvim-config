@@ -2,14 +2,8 @@ local project = require("config.project")
 
 return {
   {
-    "nvim-tree/nvim-web-devicons",
-    lazy = true,
-    opts = { default = true },
-  },
-  {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFindFile", "NvimTreeFindFileToggle", "NvimTreeFocus" },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
     init = function()
       vim.api.nvim_create_autocmd("VimEnter", {
         group = vim.api.nvim_create_augroup("config_start_page", { clear = true }),
@@ -61,7 +55,6 @@ return {
       })
     end,
     opts = function()
-      local nerd = vim.g.have_nerd_font == true
       return {
         hijack_cursor = false,
         sync_root_with_cwd = true,
@@ -80,23 +73,22 @@ return {
           group_empty = true,
           indent_markers = { enable = true },
           icons = {
-            web_devicons = { file = { enable = nerd }, folder = { enable = false } },
+            web_devicons = { file = { enable = false }, folder = { enable = false } },
             git_placement = "after",
             modified_placement = "after",
             show = {
               file = true, folder = true, folder_arrow = true, git = true,
               modified = true, hidden = false, diagnostics = false, bookmarks = false,
             },
-            glyphs = vim.tbl_deep_extend("force", {
+            glyphs = {
               modified = "*",
               git = { unstaged = "M", staged = "S", unmerged = "U", renamed = "R", untracked = "?", deleted = "D", ignored = "I" },
-            }, nerd and {} or {
               default = "[]", symlink = "@",
               folder = {
                 default = "[+]", open = "[-]", empty = "[ ]", empty_open = "[ ]",
                 symlink = "[@]", symlink_open = "[@]", arrow_closed = ">", arrow_open = "v",
               },
-            }),
+            },
           },
         },
         filters = { dotfiles = false, git_ignored = true, custom = { "^[.]git$" } },
@@ -127,12 +119,12 @@ return {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
     cmd = "Telescope",
-    dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
+    dependencies = { "nvim-lua/plenary.nvim" },
     opts = function()
       return {
         defaults = {
           path_display = { "truncate" },
-          disable_devicons = not vim.g.have_nerd_font,
+          disable_devicons = true,
           prompt_prefix = "> ", selection_caret = "> ",
           sorting_strategy = "ascending", layout_strategy = "flex",
           layout_config = {

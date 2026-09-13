@@ -47,7 +47,7 @@ opt.lazyredraw = false
 opt.laststatus = 3
 opt.winborder = "rounded"
 opt.cursorlineopt = "number"
-opt.showmode = false
+opt.showmode = true
 
 opt.ignorecase = true
 opt.smartcase = true

@@ -1,6 +1,6 @@
 # Neovim 默认操作上手指南
 
-这套配置保留文件树、搜索、Git 标记、图标和编辑体验，但不再定义全局或插件快捷键。目标是直接练习 Neovim 的系统默认操作，换到其他机器也能继续使用。
+这套配置保留文件树、搜索、Git 标记和编辑体验，但不再定义全局或插件快捷键。目标是直接练习 Neovim 的系统默认操作，换到其他机器也能继续使用。
 
 开始前先分清三类入口：
 
@@ -8,7 +8,7 @@
 - **插件默认命令与局部按键**：文件树、Telescope 和 Gitsigns 自带，只在对应插件或窗口中生效。
 - **本配置提供的命令**：`:Search` 和 `:Search!` 用于项目全文搜索，它们不是 Neovim 原生命令。
 
-本机已有 Neovim、Git、Telescope、nvim-tree、nvim-web-devicons、gitsigns 和 lualine；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。浅色背景、256 色模式和本机已有的 `catppuccin` 配色也保持不变。
+本机已有 Neovim、Git、lazy.nvim、Telescope、plenary.nvim、nvim-tree 和 gitsigns；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。浅色背景、256 色模式和本机已有的 `catppuccin` 配色也保持不变。
 
 ## 先用 15–20 分钟练 Tutor
 
@@ -72,7 +72,7 @@ nvim .
 
 文件树默认显示点文件，隐藏 `.git` 和被 Git 忽略的文件。目录会聚合子文件的 Git 状态及未保存标记：`M` 为修改、`S` 为已暂存、`?` 为未跟踪、`U` 为冲突、`R` 为重命名、`D` 为删除、`I` 为忽略，`*` 表示编辑器内尚未保存的修改。
 
-为兼容普通终端字体，默认使用文本图标：`[]` 文件、`[+]` 关闭目录、`[-]` 展开目录、`[ ]` 空目录、`@` 链接。若终端已经使用 Nerd Font，可把 `init.lua` 中 `vim.g.have_nerd_font = false` 改为 `true` 后重启，启用已有的文件类型图标；这也控制 Telescope 图标，不会安装字体。
+为兼容普通终端字体，默认使用文本图标：`[]` 文件、`[+]` 关闭目录、`[-]` 展开目录、`[ ]` 空目录、`@` 链接。文件树和 Telescope 均不依赖字体图标插件。
 
 ## 文件与全文搜索：Telescope
 
@@ -104,7 +104,7 @@ Gitsigns 保留代码行旁的增删改标记和 blame 能力，但不定义快�
 - `:Gitsigns toggle_current_line_blame` 开关行尾 blame。
 - `:Gitsigns diffthis` 与 Git 索引对比；结束后关闭分屏，必要时执行 `:diffoff!`。
 
-`[c` / `]c` 不再映射为 Git 改动跳转，保留给 Neovim 原生 diff 操作。状态栏仍显示分支和增删改行数；行尾 blame 会在停留约 700 毫秒后显示作者、日期和说明。
+`[c` / `]c` 不再映射为 Git 改动跳转，保留给 Neovim 原生 diff 操作。状态栏使用 Neovim 原生样式；行尾 blame 会在停留约 700 毫秒后显示作者、日期和说明。
 
 ## 后续练习与维护
 
