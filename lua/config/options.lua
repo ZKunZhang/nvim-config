@@ -41,7 +41,6 @@ opt.listchars = {
   precedes = "<",
   nbsp = "+",
 }
-opt.synmaxcol = 200
 opt.redrawtime = 1500
 opt.lazyredraw = false
 opt.laststatus = 3

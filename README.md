@@ -8,7 +8,7 @@
 - **插件默认命令与局部按键**：文件树、Telescope 和 Gitsigns 自带，只在对应插件或窗口中生效。
 - **本配置提供的命令**：`:Search` 和 `:Search!` 用于项目全文搜索，它们不是 Neovim 原生命令。
 
-本机已有 Neovim、Git、lazy.nvim、Telescope、plenary.nvim、nvim-tree 和 gitsigns；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。浅色背景、256 色模式和本机已有的 `catppuccin` 配色也保持不变。
+本机已有 Neovim、Git、lazy.nvim、Telescope、plenary.nvim、nvim-tree 和 gitsigns；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。采用 Neovim 内置的 `default` 配色，保留浅色背景和 256 色模式，无需额外主题文件。
 
 ## 先用 15–20 分钟练 Tutor
 
@@ -61,7 +61,7 @@ cd /path/to/project
 nvim .
 ```
 
-`nvim .` 会打开文件树。也可执行插件命令 `:NvimTreeToggle` 开关文件树，在代码窗口执行 `:NvimTreeFindFile!` 打开文件树并定位当前文件（必要时切换树根）；命令输入后按 `Enter`。
+直接运行 `nvim` 进入空白编辑区，不显示自定义教学欢迎页；入门练习见本文或 `:Tutor`。`nvim .` 会打开文件树。也可执行插件命令 `:NvimTreeToggle` 开关文件树，在代码窗口执行 `:NvimTreeFindFile!` 打开文件树并定位当前文件（必要时切换树根）；命令输入后按 `Enter`。
 
 文件树窗口使用 nvim-tree 的默认局部按键：
 
@@ -110,7 +110,7 @@ Gitsigns 保留代码行旁的增删改标记和 blame 能力，但不定义快�
 
 熟悉基础后，可练 `%` 跳到匹配括号、`gf` 打开光标下路径、`:%s/旧/新/gc` 逐项确认替换。Neovim 0.12 还内置 `gcc` 注释当前行、可视模式 `gc` 注释选区，可用 `:help commenting` 查看说明。插入模式下的 `Ctrl-n` / `Ctrl-p` 是原生关键词补全，`Ctrl-x Ctrl-f` 补全路径。
 
-普通文件保留持久化撤销、复制高亮、替换预览和大文件降载设置。未安装 LSP，因此原生 `gd` 只做局部声明查找，不提供跨项目语义跳转。
+普通文件保留持久化撤销、复制高亮和替换预览，语法高亮列数使用 Neovim 默认值。大文件单独限制高亮、撤销和折叠，不改变全局重绘时限；达到 5 MiB 或 50000 行时跳过行宽采样，直接执行最高级别降载。文件树在保存、重新获得焦点或终端命令结束后刷新，不再因每次切换 buffer 触发刷新。未安装 LSP，因此原生 `gd` 只做局部声明查找，不提供跨项目语义跳转。
 
 本次不会运行 `:Lazy sync`、更新插件或提交配置，也不会新增安装。应用配置前的备份如已存在请继续保留；旧 Neovim 实例需要关闭并重启，才能载入全部改动。
 
