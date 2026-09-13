@@ -3,6 +3,8 @@ local function apply()
   if vim.g.colors_name ~= "default" then return end
   local light = vim.o.background == "light"
   local groups = {
+    Identifier = { 60, "#5f5f87", 146, "#afafd7" },
+    PreProc = { 90, "#870087", 176, "#d787d7" },
     Function = { 25, "#005faf", 75, "#5fafff", bold = true },
     Statement = { 90, "#870087", 176, "#d787d7", bold = true },
     Type = { 30, "#008787", 80, "#5fd7d7" },
@@ -15,6 +17,24 @@ local function apply()
       fg = color[light and 2 or 4],
       bold = color.bold or false,
     })
+  end
+  -- Fill missing links and separate types, tags and selectors from functions.
+  local links = {
+    typescriptInterfaceName = "Type",
+    typescriptAliasDeclaration = "Type",
+    typescriptTypeReference = "Type",
+    typescriptUserDefinedType = "Type",
+    typescriptMember = "Identifier",
+    typescriptVariableDeclaration = "Identifier",
+    typescriptDefaultImportName = "Identifier",
+    tsxIntrinsicTagName = "Statement",
+    sassMixinName = "Function",
+    sassFunctionName = "Function",
+    sassClass = "Statement",
+    sassId = "Statement",
+  }
+  for name, target in pairs(links) do
+    vim.api.nvim_set_hl(0, name, { link = target })
   end
 end
 
