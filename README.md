@@ -1,207 +1,121 @@
-# Neovim 代码浏览配置操作文档
+# Neovim 默认操作上手指南
 
-## 1. 配置用途
+这套配置保留文件树、搜索、Git 标记、图标和编辑体验，但不再定义全局或插件快捷键。目标是直接练习 Neovim 的系统默认操作，换到其他机器也能继续使用。
 
-这套配置用于快速浏览项目、查找文件、全文搜索代码和查看 Git 改动，不包含 LSP、代码补全、自动格式化等开发工具链。
+开始前先分清三类入口：
 
-保留的核心能力：
+- **Neovim 原生按键与命令**：例如 `hjkl`、`:w`、窗口和 buffer 操作，可在普通 Neovim 中使用。
+- **插件默认命令与局部按键**：文件树、Telescope 和 Gitsigns 自带，只在对应插件或窗口中生效。
+- **本配置提供的命令**：`:Search` 和 `:Search!` 用于项目全文搜索，它们不是 Neovim 原生命令。
 
-- Telescope：查找文件、搜索代码、切换已打开文件
-- nvim-tree：浏览项目目录
-- Git：列出项目文件并全文搜索代码
-- gitsigns：显示 Git 行级改动
-- lualine：显示编辑器状态栏
-- lazy.nvim：管理 Neovim 插件
+本机已有 Neovim、Git、Telescope、nvim-tree、nvim-web-devicons、gitsigns 和 lualine；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。浅色背景、256 色模式和本机已有的 `catppuccin` 配色也保持不变。
 
-配置仓库：`git@github.com:ZKunZhang/nvim-config.git`
+## 先用 15–20 分钟练 Tutor
 
-### 终端与配色
+在 Neovim 中输入 `:Tutor`，按 `Enter`，跟着内置教程实际敲一遍。本机已启用系统自带 Tutor，无需联网或安装。遇到陌生操作可输入 `:help 关键词`，例如 `:help buffers`；帮助窗口用 `:q` 关闭。
 
-配置针对 macOS Terminal 的 `Basic` 浅色 Profile，使用 Neovim 内置 `default` 配色和 256 色模式，不需要安装额外主题插件。
+建议按下面顺序练习，每个动作重复几次：
 
-## 2. 环境安装
+1. `Esc` 回到普通模式；`i` 进入插入模式并输入文字，再按 `Esc`。
+2. 用 `h j k l` 左、下、上、右移动；再练 `w`、`b` 按单词前进和后退。
+3. 用 `0`、`$` 到行首和行尾，`gg`、`G` 到文件开头和结尾。
+4. 用 `i` 在光标前插入、`a` 在光标后插入、`o` 在下方新建一行。
+5. 用 `dw` 删除到下一个单词开头，`ciw` 修改光标所在单词，`dd` 删除整行。
+6. 用 `yy` 复制整行、`p` 粘贴，`u` 撤销、`Ctrl-r` 重做，`.` 重复上一次修改。
+7. 输入 `:w` 保存、`:q` 退出、`:wq` 保存并退出；所有 `:` 命令都要按 `Enter` 执行。
 
-macOS 使用 Homebrew 安装：
+普通模式的常见语法是“动作 + 范围”。`c` 表示修改，`d` 表示删除，`y` 表示复制；`iw` 是当前单词，`i(` 是括号内部，`i"` 是双引号内部。因此 `ciw` 修改当前单词，`di(` 删除括号内文本，`yi"` 复制双引号内文本。先学少量组合，再用相同规则扩展，比背很多快捷键更快。
 
-```bash
-brew install neovim
+第一次练完 Tutor 后，可用一个临时文件串起这些动作：
+
+```sh
+nvim /tmp/nvim-practice.txt
 ```
 
-确认安装结果：
+写三行文字，依次修改一个单词、删除一行、撤销并重做，然后搜索一个词，最后用 `:wq` 保存退出。再次打开同一文件，试着只用普通模式移动和编辑。若想放弃本次修改，用 `:q!` 退出；其中 `!` 表示强制执行，应先确认内容确实不需要保存。
 
-```bash
-nvim --version
-git --version
-```
+## 搜索、文件和跳转
 
-## 3. 安装配置
+这些都是 Neovim 原生操作：
 
-首次安装：
+- `/文字` 向文件末尾搜索，`?文字` 向文件开头搜索；`n` 到同方向下一处，`N` 反方向跳转。
+- `*` 向文件末尾搜索光标下的单词，`#` 向文件开头搜索；`:noh` 清除搜索高亮。
+- `:e path` 打开文件。输入一部分路径后按 `Tab` 补全命令行中的路径。
+- `:ls` 列出 buffer，`:b 名称` 切换，`:bn` / `:bp` 切到下一个 / 上一个，`:bd` 删除当前 buffer。
+- `Ctrl-o` 回到较早的跳转位置，`Ctrl-i` 向前返回；它们适合在搜索和文件跳转后往返。
 
-```bash
-git clone git@github.com:ZKunZhang/nvim-config.git ~/.config/nvim
-nvim
-```
+使用 `:ls` 查看已打开文件及修改状态，用 buffer 命令切换文件。`Tab` 保留原生含义。顶部标签栏恢复 Neovim 默认行为，仅在有多个 tab page 时显示。
 
-第一次启动时，lazy.nvim 会自动下载所需插件。等待安装完成后重启 Neovim 即可。
+## 分屏
 
-如果 `~/.config/nvim` 已存在，请先备份原配置，再执行克隆：
+`:vs` 垂直分屏，`:sp` 水平分屏，`:q` 关闭当前窗口。用 `Ctrl-w h/j/k/l` 移到左、下、上、右窗口，或反复按 `Ctrl-w w` 在窗口间轮换。这里的 `Ctrl-w h` 表示先按 `Ctrl-w`，松开后再按 `h`。
 
-```bash
-mv ~/.config/nvim ~/.config/nvim.backup
-git clone git@github.com:ZKunZhang/nvim-config.git ~/.config/nvim
-```
+普通编辑区中的 `h`、`l` 已恢复为原生水平移动，不会跨行，也不再承担文件树操作。
 
-## 4. 打开项目
+## 文件树：nvim-tree
 
-在项目根目录执行：
+在项目目录运行：
 
-```bash
+```sh
 cd /path/to/project
 nvim .
 ```
 
-也可以直接打开某个文件：
+`nvim .` 会打开文件树。也可执行插件命令 `:NvimTreeToggle` 开关文件树，在代码窗口执行 `:NvimTreeFindFile!` 打开文件树并定位当前文件（必要时切换树根）；命令输入后按 `Enter`。
 
-```bash
-nvim src/pages/index.tsx
+文件树窗口使用 nvim-tree 的默认局部按键：
+
+- `j` / `k` 上下移动，`Enter` 展开或收起目录、打开文件。
+- `Backspace` 收起当前目录或返回父目录，`R` 刷新。
+- `f` 开始按名称过滤，`F` 清除过滤，`C` 只显示有 Git 改动的文件。
+- `g?` 打开 nvim-tree 的完整按键帮助，以本机插件实际版本为准。
+
+文件树默认显示点文件，隐藏 `.git` 和被 Git 忽略的文件。目录会聚合子文件的 Git 状态及未保存标记：`M` 为修改、`S` 为已暂存、`?` 为未跟踪、`U` 为冲突、`R` 为重命名、`D` 为删除、`I` 为忽略，`*` 表示编辑器内尚未保存的修改。
+
+为兼容普通终端字体，默认使用文本图标：`[]` 文件、`[+]` 关闭目录、`[-]` 展开目录、`[ ]` 空目录、`@` 链接。若终端已经使用 Nerd Font，可把 `init.lua` 中 `vim.g.have_nerd_font = false` 改为 `true` 后重启，启用已有的文件类型图标；这也控制 Telescope 图标，不会安装字体。
+
+## 文件与全文搜索：Telescope
+
+以下是插件命令，不是 Neovim 原生命令：
+
+- `:Telescope find_files` 查找项目文件。
+- `:Telescope buffers` 查找已打开的 buffer。
+- `:Telescope current_buffer_fuzzy_find` 搜索当前 buffer，包括未保存内容。
+- `:Telescope resume` 恢复上一次 Telescope 搜索及输入。
+
+Telescope 默认先处于插入模式：`Ctrl-n` / `Ctrl-p` 向下 / 向上选择，`Enter` 打开，`Ctrl-c` 关闭。按 `Esc` 会先回到普通模式，再按一次 `Esc` 才关闭。`Ctrl-u` / `Ctrl-d` 滚动预览；`Ctrl-p` 现在用于向上选择，不再开关预览。`Ctrl-q` 把全部结果送入 quickfix。
+
+quickfix 使用 Neovim 原生命令：`:copen` 打开列表，`:cnext` / `:cprev` 跳到下一条 / 上一条。
+
+## 本配置的全文搜索命令
+
+`:Search` 按 Git 基本正则搜索项目内容，也可输入 `:Search 搜索词`。`:Search! a.b` 按普通文本搜索，此时 `.` 等字符没有正则含义。这两个命令由本配置提供，并非 Neovim 或 Telescope 自带命令。
+
+输入不含大写字母时忽略大小写，含大写字母时区分大小写。搜索包括 Git 已跟踪和未跟踪文件的**磁盘内容**，遵守忽略规则并跳过二进制文件；因此未保存的修改不会出现，搜索未保存内容请用 `:Telescope current_buffer_fuzzy_find`。
+
+在非 Git 普通目录中，全文搜索也可工作，无需先建仓库。项目根优先取最近的 Git 根；否则尝试常见项目标记，最后使用当前文件目录或工作目录。文件与全文搜索会跳过 `.git`、`node_modules`、`dist`、`build`、`coverage`、`.next`、`.turbo`、`.yarn` 和 `.cache`。
+
+## Git 阅读：Gitsigns
+
+Gitsigns 保留代码行旁的增删改标记和 blame 能力，但不定义快捷键。使用插件命令：
+
+- `:Gitsigns preview_hunk` 预览光标所在改动块。
+- `:Gitsigns blame_line` 查看当前行提交信息。
+- `:Gitsigns toggle_current_line_blame` 开关行尾 blame。
+- `:Gitsigns diffthis` 与 Git 索引对比；结束后关闭分屏，必要时执行 `:diffoff!`。
+
+`[c` / `]c` 不再映射为 Git 改动跳转，保留给 Neovim 原生 diff 操作。状态栏仍显示分支和增删改行数；行尾 blame 会在停留约 700 毫秒后显示作者、日期和说明。
+
+## 后续练习与维护
+
+熟悉基础后，可练 `%` 跳到匹配括号、`gf` 打开光标下路径、`:%s/旧/新/gc` 逐项确认替换。Neovim 0.12 还内置 `gcc` 注释当前行、可视模式 `gc` 注释选区，可用 `:help commenting` 查看说明。插入模式下的 `Ctrl-n` / `Ctrl-p` 是原生关键词补全，`Ctrl-x Ctrl-f` 补全路径。
+
+普通文件保留持久化撤销、复制高亮、替换预览和大文件降载设置。未安装 LSP，因此原生 `gd` 只做局部声明查找，不提供跨项目语义跳转。
+
+本次不会运行 `:Lazy sync`、更新插件或提交配置，也不会新增安装。应用配置前的备份如已存在请继续保留；旧 Neovim 实例需要关闭并重启，才能载入全部改动。
+
+可用以下命令检查配置能否无界面启动：
+
+```sh
+nvim --headless '+lua print("配置加载成功")' +qa
 ```
-
-## 5. 新手先用这些
-
-先按 `Esc` 回到普通模式。`Space e` 表示依次按空格、`e`，不用同时按。
-
-| 操作 | 按键 |
-| --- | --- |
-| 开关文件树 | `Space e`，选中文件后按 `Enter` 打开 |
-| 按名称打开文件 | `Space f f` |
-| 切换已打开文件 | 鼠标点击顶部文件标签 |
-| 保存当前文件 | `Space w` |
-| 关闭当前文件 | `Space b d`，未保存时会询问 |
-
-按 `i` 开始输入，按 `Esc` 结束输入。退出整个编辑器：输入 `:qa` 后按 `Enter`，未保存时会询问。
-
-顶部标签中的 `[+]` 表示尚未保存。标签展示缩短后的路径以区分同名文件，切换文件会保留未保存的编辑。关闭文件可能同时关闭显示它的分屏。
-
-可选操作，需要时再看：
-
-- `Tab` / `Shift-Tab`：普通模式下切换下一个 / 上一个文件。
-- `:Telescope buffers`：文件太多时，搜索已打开文件。
-- `/关键词`：文件内搜索；`n` / `N` 跳转匹配项；`Space /` 清除高亮。
-
-底部状态栏显示当前模式、Git 分支、文件路径、文件类型和光标位置。顶部标签负责切换文件，底部路径用于确认当前文件的位置。
-
-## 6. 文件树命令
-
-在 Neovim 命令模式下可使用：
-
-```vim
-:NvimTreeToggle
-```
-
-打开或关闭文件树。
-
-```vim
-:NvimTreeFindFileToggle
-```
-
-打开文件树并定位当前文件。
-
-## 7. 搜索命令
-
-除快捷键外，还支持以下命令：
-
-```vim
-:Search
-```
-
-打开 Telescope 全局搜索界面，通过 Git 实时搜索项目代码，无需安装 ripgrep。也可以使用 `:Search 搜索文本` 带入初始搜索词。
-
-### Git blame
-
-在 Git 已跟踪的文件中，光标停留 500 毫秒后，当前行末尾会显示作者、提交日期和提交说明。
-
-- `:Gitsigns blame_line`：查看当前行的提交详情。
-- `:Gitsigns toggle_current_line_blame`：临时开启或关闭行内 blame。
-- `:Gitsigns blame`：查看整个文件的 blame。
-
-## 8. 基础操作
-
-| 操作 | 按键或命令 |
-| --- | --- |
-| 进入插入模式 | `i` |
-| 返回普通模式 | `Esc` |
-| 保存文件 | `:w` |
-| 退出 | `:q` |
-| 保存并退出 | `:wq` |
-| 强制退出且不保存 | `:q!` |
-| 向下翻页 | `Ctrl-f` |
-| 向上翻页 | `Ctrl-b` |
-
-## 9. 更新配置
-
-拉取远端配置：
-
-```bash
-git -C ~/.config/nvim pull --ff-only
-```
-
-启动 Neovim 后同步插件：
-
-```vim
-:Lazy sync
-```
-
-也可以在终端执行：
-
-```bash
-nvim --headless "+Lazy! sync" +qa
-```
-
-## 10. 修改并提交配置
-
-```bash
-cd ~/.config/nvim
-git status
-git add -A
-git commit -m "中文提交说明"
-git push origin main
-```
-
-提交前建议验证 Neovim 可以正常启动：
-
-```bash
-nvim --headless "+lua print('配置加载成功')" +qa
-```
-
-## 11. 故障处理
-
-### 插件未安装完整
-
-在 Neovim 中执行：
-
-```vim
-:Lazy sync
-```
-
-如果 GitHub 网络临时失败，稍后重试即可。
-
-### 文件或全文搜索不可用
-
-当前配置使用 Git 搜索，不需要安装 ripgrep、fd 或 npm 工具。请确认打开的目录属于 Git 仓库：
-
-```bash
-git rev-parse --show-toplevel
-git ls-files | head
-```
-
-### 完全重装插件
-
-先退出所有 Neovim 实例，再将插件目录移走作为备份：
-
-```bash
-mv ~/.local/share/nvim ~/.local/share/nvim.backup
-nvim
-```
-
-确认新环境正常后，再自行删除备份目录。

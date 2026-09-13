@@ -1,20 +1,7 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
-  local out = vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-    }, true, {})
-    return
-  end
+  vim.notify("未找到已有 lazy.nvim；当前配置不会自动安装插件。", vim.log.levels.WARN)
+  return
 end
 
 vim.opt.rtp:prepend(lazypath)
@@ -26,6 +13,7 @@ require("lazy").setup({
     { import = "plugins.git" },
   },
   install = {
+    missing = false,
     colorscheme = { "habamax" },
   },
   checker = {
@@ -38,11 +26,8 @@ require("lazy").setup({
     rtp = {
       disabled_plugins = {
         "gzip",
-        "matchit",
-        "matchparen",
         "tarPlugin",
         "tohtml",
-        "tutor",
         "zipPlugin",
       },
     },

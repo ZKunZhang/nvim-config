@@ -4,17 +4,18 @@ opt.fileencodings = { "utf-8", "ucs-bom", "gb18030", "gbk", "gb2312", "cp936", "
 opt.autoread = true
 opt.confirm = true
 opt.undolevels = 1000
-opt.directory = vim.fn.expand("~/.local/state/nvim/swap//")
-opt.undodir = vim.fn.expand("~/.local/state/nvim/undo")
-opt.viewdir = vim.fn.expand("~/.local/state/nvim/view//")
+local state_dir = vim.fn.stdpath("state")
+opt.directory = state_dir .. "/swap//"
+opt.undodir = state_dir .. "/undo//"
+opt.viewdir = state_dir .. "/view//"
 opt.undofile = true
 -- Keep long-running terminal jobs from retaining an unbounded amount of output.
 opt.scrollback = 2000
 
 for _, dir in ipairs({
-  vim.fn.expand("~/.local/state/nvim/swap"),
-  vim.fn.expand("~/.local/state/nvim/undo"),
-  vim.fn.expand("~/.local/state/nvim/view"),
+  state_dir .. "/swap",
+  state_dir .. "/undo",
+  state_dir .. "/view",
 }) do
   vim.fn.mkdir(dir, "p")
 end
@@ -42,7 +43,7 @@ opt.listchars = {
 }
 opt.synmaxcol = 200
 opt.redrawtime = 1500
-opt.lazyredraw = true
+opt.lazyredraw = false
 opt.laststatus = 3
 opt.winborder = "rounded"
 opt.cursorlineopt = "number"
@@ -55,8 +56,9 @@ opt.hlsearch = true
 opt.history = 500
 opt.shada = { "!", "'100", "<50", "s10", "h" }
 opt.wildignorecase = true
-opt.inccommand = "nosplit"
-opt.completeopt = { "menu", "menuone", "noselect" }
+opt.inccommand = "split"
+opt.completeopt = { "menu", "menuone", "noselect", "popup" }
+opt.jumpoptions = "view"
 opt.backspace = { "indent", "eol", "start" }
 opt.autoindent = true
 opt.smartindent = true
@@ -66,11 +68,10 @@ opt.shiftwidth = 2
 opt.softtabstop = 2
 opt.shiftround = true
 opt.formatoptions:remove({ "c", "r", "o" })
-opt.whichwrap:append("<,>,[,],h,l")
 opt.clipboard = "unnamed,unnamedplus"
 opt.timeoutlen = 400
 opt.shortmess:append("I")
-opt.switchbuf = { "useopen", "usetab" }
+opt.switchbuf = { "useopen" }
 opt.updatetime = 200
 
 opt.wildignore:append({
@@ -85,4 +86,3 @@ opt.wildignore:append({
 
 -- Keep opened files available when switching, including unsaved edits.
 opt.hidden = true
-opt.showtabline = 2

@@ -22,28 +22,6 @@ autocmd("BufReadPost", {
   end,
 })
 
-local frontend_filetypes = {
-  javascript = true,
-  javascriptreact = true,
-  typescript = true,
-  typescriptreact = true,
-}
-
-local expensive_filetypes = {
-  css = true,
-  html = true,
-  javascript = true,
-  javascriptreact = true,
-  json = true,
-  jsonc = true,
-  markdown = true,
-  toml = true,
-  typescript = true,
-  typescriptreact = true,
-  xml = true,
-  yaml = true,
-}
-
 local function max_sample_line_width(limit)
   local max_width = 0
   for lnum = 1, math.min(limit, vim.api.nvim_buf_line_count(0)) do
@@ -57,24 +35,18 @@ end
 
 local function preload_large_file(args)
   local stats = vim.uv.fs_stat(args.file)
-  if not stats or stats.type ~= "file" or stats.size < 256 * 1024 then
+  if not stats or stats.type ~= "file" or stats.size < 1024 * 1024 then
     return
   end
 
   vim.b.codex_largefile_bytes = stats.size
   vim.opt_local.undofile = false
-  vim.opt_local.swapfile = false
-  vim.opt_local.bufhidden = "unload"
   vim.opt_local.cursorline = false
   vim.opt_local.list = false
   vim.opt_local.synmaxcol = 120
   vim.opt_local.foldmethod = "manual"
   vim.opt_local.foldenable = false
   vim.opt_local.redrawtime = 1000
-
-  if stats.size >= 1024 * 1024 then
-    vim.opt_local.undolevels = -1
-  end
 end
 
 local function optimize_large_file()
@@ -86,14 +58,8 @@ local function optimize_large_file()
   local byte_size = vim.b.codex_largefile_bytes or math.max(vim.fn.line2byte(line_count + 1) - 1, 0)
   local max_width = max_sample_line_width(1000)
   local file_name = vim.fn.expand("%:t")
-  local is_frontend = frontend_filetypes[vim.bo.filetype]
-  local size_limit = is_frontend and 160 * 1024 or 256 * 1024
-  local line_limit = is_frontend and 450 or 800
-  local width_limit = is_frontend and 180 or 240
-  local is_large = byte_size >= size_limit or line_count >= line_limit or max_width >= width_limit
-  local is_very_large = byte_size >= (is_frontend and 320 * 1024 or 1024 * 1024)
-    or line_count >= (is_frontend and 900 or 2000)
-    or max_width >= (is_frontend and 320 or 480)
+  local is_large = byte_size >= 1024 * 1024 or line_count >= 10000 or max_width >= 1000
+  local is_very_large = byte_size >= 5 * 1024 * 1024 or line_count >= 50000 or max_width >= 4000
   local lockfiles = { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "Cargo.lock" }
   local is_lockfile = vim.tbl_contains(lockfiles, file_name)
   local is_minified = max_width >= 800
@@ -107,8 +73,6 @@ local function optimize_large_file()
   end
 
   vim.opt_local.undofile = false
-  vim.opt_local.swapfile = false
-  vim.opt_local.bufhidden = "unload"
   vim.opt_local.cursorline = false
   vim.opt_local.list = false
   vim.opt_local.synmaxcol = 120
@@ -117,18 +81,18 @@ local function optimize_large_file()
   vim.opt_local.redrawtime = 1000
   vim.cmd("silent! syntax sync minlines=20 maxlines=60")
 
-  if
-    is_very_large
-    or is_minified
-    or is_generated
-    or (is_lockfile and byte_size >= 256 * 1024)
-    or (expensive_filetypes[vim.bo.filetype] and byte_size >= 384 * 1024)
-  then
+  if is_very_large or is_minified or is_generated or is_lockfile then
     vim.bo.syntax = "OFF"
     vim.opt_local.cursorcolumn = false
-    vim.opt_local.undolevels = -1
     vim.opt_local.spell = false
     vim.b.codex_largefile_level = 2
+    -- FileType/syntax autocommands may run after BufReadPost during startup.
+    local bufnr = vim.api.nvim_get_current_buf()
+    vim.schedule(function()
+      if vim.api.nvim_buf_is_valid(bufnr) and vim.b[bufnr].codex_largefile_level == 2 then
+        vim.bo[bufnr].syntax = "OFF"
+      end
+    end)
     return
   end
 
@@ -143,4 +107,18 @@ autocmd("BufReadPre", {
 autocmd("BufReadPost", {
   group = augroup("codex_largefile_optimize", { clear = true }),
   callback = optimize_large_file,
+})
+
+autocmd("TextYankPost", {
+  group = augroup("codex_yank_highlight", { clear = true }),
+  callback = function()
+    vim.hl.on_yank({ higroup = "IncSearch", timeout = 150 })
+  end,
+})
+
+autocmd("FileType", {
+  group = augroup("codex_formatoptions", { clear = true }),
+  callback = function(args)
+    vim.bo[args.buf].formatoptions = vim.bo[args.buf].formatoptions:gsub("[cro]", "")
+  end,
 })

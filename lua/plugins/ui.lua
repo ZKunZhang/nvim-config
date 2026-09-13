@@ -10,23 +10,9 @@ return {
         component_separators = { left = "|", right = "|" },
         section_separators = { left = "", right = "" },
       },
-      tabline = {
-        lualine_a = {
-          {
-            "buffers",
-            mode = 0,
-            show_filename_only = false,
-            show_modified_status = true,
-            max_length = function()
-              return vim.o.columns
-            end,
-            symbols = { modified = " [+]", alternate_file = "", directory = "Dir" },
-          },
-        },
-      },
       sections = {
         lualine_a = { "mode" },
-        lualine_b = { "branch" },
+        lualine_b = { "branch", { "diff", symbols = { added = "+", modified = "~", removed = "-" } } },
         lualine_c = { { "filename", path = 1 } },
         lualine_x = { "filetype" },
         lualine_y = {},
