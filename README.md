@@ -8,7 +8,7 @@
 - **插件默认命令与局部按键**：文件树、Telescope 和 Gitsigns 自带，只在对应插件或窗口中生效。
 - **本配置提供的命令**：`:Search` 和 `:Search!` 用于项目全文搜索，它们不是 Neovim 原生命令。
 
-本机已有 Neovim、Git、lazy.nvim、Telescope、plenary.nvim、nvim-tree 和 gitsigns；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。采用 Neovim 内置的 `default` 配色，保留浅色背景和 256 色模式，无需额外主题文件。
+本机已有 Neovim、Git、lazy.nvim、Telescope、plenary.nvim、nvim-tree 和 gitsigns；不需要安装或升级任何东西。配置仓库为 `git@github.com:ZKunZhang/nvim-config.git`，`lazy-lock.json` 保留现有插件版本。采用 Neovim 内置的 `default` 配色，保留浅色背景和 256 色模式，无需额外主题文件。默认主题补充了适合 256 色终端的语法颜色：函数蓝色加粗、关键字紫色、类型青色、常量橙色、字符串绿色。
 
 ## 先用 15–20 分钟练 Tutor
 

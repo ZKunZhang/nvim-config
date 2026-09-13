@@ -6,4 +6,5 @@ require("config.keymaps")
 require("config.autocmds")
 require("config.lazy")
 
+require("config.highlights")
 vim.cmd.colorscheme("default")
